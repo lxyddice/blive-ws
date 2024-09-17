@@ -28,5 +28,5 @@ jobs:
       - name: 部署到 Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: blive-ws
+          project: lxyddice-blive-ws
           entrypoint: src/backend/server.ts
