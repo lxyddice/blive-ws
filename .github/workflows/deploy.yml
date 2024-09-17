@@ -1,32 +1,42 @@
 name: Deploy
-run-name: ${{ github.actor }} is running Deploy Actions 🚀
-
 on:
   push:
+    branches: master
+  pull_request:
     branches: master
 
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write # Needed for auth with Deno Deploy
       contents: read # Needed to clone the repository
 
     steps:
-      - name: 拉取代码
+      - name: Clone repository
         uses: actions/checkout@v4
 
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v2
+      - name: Install Deno
+        uses: denoland/setup-deno@v1
         with:
-          version: 7.x
+          deno-version: v1.x
 
-      - name: 安装依赖并执行构建
-        run: pnpm i && pnpm --prefix src/frontend i && npm run build
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
-      - name: 部署到 Deno Deploy
+      - name: Install step
+        run: "npm install"
+
+      - name: Build step
+        run: "npm run build"
+
+      - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: blive
-          entrypoint: src/backend/server.ts
+          project: "lxyddice-blive-ws-51"
+          entrypoint: "https://deno.land/std@0.217.0/http/file_server.ts"
+          root: "dist"
